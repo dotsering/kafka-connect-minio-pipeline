@@ -35,7 +35,7 @@ end
 
 # 🚀 Kafka to MinIO(S3) Data Pipeline using Kafka Connect with Custom SMT
 
-A resilient, end-to-end streaming data pipeline that ingests user profile avro data into **Apache Kafka**, applies a **Custom Single Message Transform (SMT)** to redact sensitive information (PII) and derive new columns. Finally, sinks the cleaned + enriched data into **MinIO (S3)** in JSON format.
+An end-to-end streaming data pipeline that ingests user profile avro data into **Apache Kafka**, applies a **Custom Single Message Transform (SMT)** to redact sensitive information (PII) and derive new columns. Finally, sinks the cleaned + enriched data into **MinIO (S3)** in JSON format.
 
 Includes a Streamlit GUI to visually compare source and sink data and verify the transformation logic.
 
@@ -51,8 +51,8 @@ Includes a Streamlit GUI to visually compare source and sink data and verify the
 ## 🛠️ Prerequisites
 
 * Docker & Docker Compose
-* Python 3.9+
-* Java 11+ (Only if modifying the Java SMT code)
+* **Python 3.10.11** (Tested)
+* **Java 11 (Amazon Corretto)** - Required to compile the SMT JAR file (`mvn package`).
 
 ## 🚀 Quick Start
 
@@ -65,14 +65,35 @@ docker-compose up -d
 
 ```
 
-### 2. Install Python Dependencies
+### 2. Build SMT JAR
+
+Compile the Java Single Message Transform so Kafka Connect can load it.
 
 ```bash
+cd smt
+mvn clean package
+cd ..
+
+```
+
+### 3. Install Python Dependencies
+
+```bash
+cd producer
+# Create virtual env
+python -m venv .venv
+
+# Activate (Mac/Linux)
+source .venv/bin/activate
+
+# Activate (Windows)
+# .venv\Scripts\activate
+
 pip install -r requirements.txt
 
 ```
 
-### 3. Deploy Connector
+### 4. Deploy Connector
 
 Configure the S3 Sink Connector with the JSON format and Custom SMT settings.
 
@@ -83,7 +104,7 @@ curl -X POST http://localhost:8083/connectors \
 
 ```
 
-### 4. Produce Data
+### 5. Produce Data
 
 Generate synthetic user data (with passwords) and send to Kafka.
 
@@ -92,7 +113,7 @@ python producer.py
 
 ```
 
-### 5. Verify Pipeline
+### 6. Verify Pipeline
 
 Launch the verification UI to prove that passwords were dropped and all rows arrived.
 
@@ -107,8 +128,9 @@ streamlit run verifier_ui.py
 .
 ├── connectors/           # Kafka Connect JSON configurations
 │   └── s3-sink.json      # S3 Sink config with SMT settings
-├── src/
-│   └── main/java/        # Java source for Custom SMT
+├── smt/                  # Java source for Custom SMT
+│   ├── src/
+│   └── pom.xml           # Maven build configuration
 ├── producer.py           # Python script to generate Avro data
 ├── verifier_ui.py        # Streamlit dashboard for auditing
 ├── docker-compose.yml    # Infrastructure definition
