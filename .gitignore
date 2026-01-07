@@ -9,7 +9,6 @@ venv/
 source_data.json
 minio_output.json
 *.avro
-*.json
 
 # IDE Settings
 .vscode/
