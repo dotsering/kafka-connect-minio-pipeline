@@ -1,3 +1,4 @@
+```mermaid
 graph LR
 %% -- NODES & SUBGRAPHS --
 subgraph "Ingestion Layer"
@@ -30,6 +31,7 @@ end
     
     %% Style for the SMT box (Dashed white box with black text)
     style SMT fill:#fff,stroke:#333,stroke-dasharray: 5 5,color:black,text-align:left
+```
 
 # 🚀 Kafka to MinIO(S3) Data Pipeline using Kafka Connect with Custom SMT
 
