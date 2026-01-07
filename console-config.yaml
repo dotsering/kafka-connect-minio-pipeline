@@ -1,0 +1,13 @@
+kafka:
+  brokers: ["broker:29092"]
+
+schemaRegistry:
+  enabled: true
+  urls: ["http://schema-registry:8081"]
+
+# FIX: The key is 'kafkaConnect', not 'connect'
+kafkaConnect:
+  enabled: true
+  clusters:
+    - name: local-connect
+      url: http://connect:8083
