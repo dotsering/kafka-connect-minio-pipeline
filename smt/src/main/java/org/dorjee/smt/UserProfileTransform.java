@@ -8,6 +8,7 @@ import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.transforms.Transformation;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 public class UserProfileTransform<R extends ConnectRecord<R>> implements Transformation<R> {
@@ -36,12 +37,12 @@ public class UserProfileTransform<R extends ConnectRecord<R>> implements Transfo
         }
 
         // 2. SCHEMA EVOLUTION
+        List<String> DROPPED_COLUMNS = List.of("raw_password_hash", "internal_tracking_code");
         if (outputSchema == null) {
             SchemaBuilder builder = SchemaBuilder.struct();
             // Copy fields EXCEPT dropped ones
             for (org.apache.kafka.connect.data.Field field : originalSchema.fields()) {
-                if (!field.name().equals("raw_password_hash") &&
-                        !field.name().equals("internal_tracking_code")) {
+                if (!DROPPED_COLUMNS.contains(field.name())) {
                     builder.field(field.name(), field.schema());
                 }
             }
@@ -56,9 +57,11 @@ public class UserProfileTransform<R extends ConnectRecord<R>> implements Transfo
         Struct newStruct = new Struct(outputSchema);
 
         for (org.apache.kafka.connect.data.Field field : originalSchema.fields()) {
-            if (!field.name().equals("raw_password_hash") &&
-                    !field.name().equals("internal_tracking_code")) {
-                newStruct.put(field.name(), originalStruct.get(field.name()));
+            if (!DROPPED_COLUMNS.contains(field.name())) {
+                if(field.name().equals("email"))
+                    newStruct.put(field.name(), "redacted@email.com");
+                else
+                    newStruct.put(field.name(), originalStruct.get(field.name()));
             }
         }
 
