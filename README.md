@@ -174,8 +174,12 @@ The verification tool checks three specific conditions for every record:
 ## Additional tips
 
 1. To shut down everything along with deleting mounted data, run `docker-compose down -v`
-2. For the connect to work, s3 bucket should be precreated. If you accidentally registered the connector before creating the S3 bucket and you see the connect task is in failed state in Redpanda console, you can run following curl command to restart it.
-   a. Get the connector name ` curl http://localhost:8083/connectors`. It should give you `s3-sink-users`.
-   b. `curl -X POST "http://localhost:8083/connectors/s3-sink-users/restart?includeTasks=true&onlyFailed=true"`
-   c. Visit Redpanda console -> Connect -> Kafka connect, you should see connect back in running state.
-   d. Go to MinIO(S3), you should see data dumped by Connect which it picked up from Kafka.
+2. For the connect to work, s3 bucket should be pre-created. If you accidentally registered the connector before creating the S3 bucket and you see the connect task is in failed state in Redpanda console, you can run following curl command to restart it.
+   
+    a. Get the connector name ` curl http://localhost:8083/connectors`. It should give you `s3-sink-users`.
+   
+    b. `curl -X POST "http://localhost:8083/connectors/s3-sink-users/restart?includeTasks=true&onlyFailed=true"`
+    
+    c. Visit Redpanda console -> Connect -> Kafka connect, you should see connect back in running state.
+
+    d. Go to MinIO(S3), you should see data dumped by Connect which it picked up from Kafka.
